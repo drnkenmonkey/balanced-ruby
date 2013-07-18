@@ -88,6 +88,10 @@ module Balanced
       save
     end
 
+    def unstore
+      self.delete
+    end
+
     def verify
       Verification.new(
           'uri' => self.verifications_uri

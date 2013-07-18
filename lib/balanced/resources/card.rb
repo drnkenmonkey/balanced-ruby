@@ -71,6 +71,10 @@ module Balanced
       save
     end
 
+    def unstore
+      self.delete
+    end
+
     private
     # Ensure that one of account, account_uri, customer or customer_uri are set.
     # Otherwise raise an exception.
