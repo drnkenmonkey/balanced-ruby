@@ -4,6 +4,7 @@ require "rake"
 require "rspec/core/rake_task"
 require "bundler/gem_tasks"
 require 'rspec'
+require 'ci/reporter/rake/rspec'
 
 desc "Run spec suite"
 RSpec::Core::RakeTask.new(:spec) { |t| }

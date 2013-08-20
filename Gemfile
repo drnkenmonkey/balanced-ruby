@@ -12,6 +12,7 @@ group :development do
 end
 
 group :test do
+  gem 'ci_reporter'
   gem 'net-http-persistent'
   gem "rspec", '~> 2.13.0'
   gem "rake", '~> 10.0.3'
