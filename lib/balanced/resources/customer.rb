@@ -19,6 +19,19 @@ module Balanced
       super attributes
     end
 
+    # Attempts to find an existing customer by email
+    #
+    # *NOTE:* There is no unique constraint on email_address.
+    #         Multiple customers with the same email may exist.
+    #         Only one Customer is returned.
+    #
+    # @param [String] email An email of a customer
+    # @return [Customer] if customer is found
+    # @return [nil] if customer is not found
+    def self.find_by_email email
+      self.find(:first, :email => email)
+    end
+    
     def debit(options = {})
       amount = options[:amount]
       appears_on_statement_as = options[:appears_on_statement_as]
@@ -60,7 +73,7 @@ module Balanced
 
     # Associates the Card represented by 'card' with this Customer.
     #
-    # @return [Card]
+    # @return [Customer]
 
     def add_card(card)
       card.save if card.kind_of?(Balanced::Card) && card.hash.nil?
@@ -71,9 +84,9 @@ module Balanced
     # Associates the BankAccount represented by bank_account with this
     # Customer.
     #
-    # @return [BankAccount]
+    # @return [Customer]
     def add_bank_account(bank_account)
-      if bank_account.kind_of?(Balanced::BankAccount) && bank_account.hash.nil?
+      if bank_account.kind_of?(Balanced::BankAccount) && bank_account.fingerprint.nil?
         bank_account.save
       end
       self.bank_account_uri = Balanced::Utils.extract_uri_from_object(bank_account)

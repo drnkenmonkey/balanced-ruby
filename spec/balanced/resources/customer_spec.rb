@@ -177,6 +177,37 @@ describe Balanced::Customer, :vcr do
       end
     end
 
+    describe "#find_by_email", :vcr => { :record => :new_episodes } do
+      before do
+        api_key = Balanced::ApiKey.new.save
+        Balanced.configure api_key.secret
+        @marketplace = Balanced::Marketplace.new.save
+        customer = @marketplace.create_customer(
+          :name           => "Bill",
+          :email          => "bill@bill.com",
+          :business_name  => "Bill Inc.",
+          :ssn_last4      => "1234",
+          :address => {
+            :line1 => "1234 1st Street",
+            :city  => "San Francisco",
+            :state => "CA"
+          }
+        ).save
+      end
+
+      context "email address is in system", :vcr => { :record => :new_episodes } do
+        it "should return customer object" do
+          Balanced::Customer.find_by_email("bill@bill.com").should be_instance_of Balanced::Customer
+        end
+      end
+
+      context "email address does not exist", :vcr => { :record => :new_episodes } do
+        it "should return nil" do
+          Balanced::Customer.find_by_email("foo@bar.com").should be_nil
+        end
+      end
+    end
+
     describe "#debit" do
       before do
         @customer = @marketplace.create_customer
@@ -255,6 +286,27 @@ describe Balanced::Customer, :vcr do
       it "should display the most recently added valid card" do
         @customer.active_bank_account.should_not be_nil
       end
+    end
+
+    describe "find_by_email", :vcr do
+      before do
+        @customer = @marketplace.create_customer(
+            :email => "balanced-ruby-issue-110@example.com"
+        )
+      end
+
+      it "should return 401 unauthorized if not authenticated" do
+        @customer.uri.should_not be_nil
+        key = Balanced.client.api_key
+        Balanced.configure(nil)
+        expect {
+          Balanced::Customer.find(
+              :first,
+              email: "balanced-ruby-issue-110@example.com")
+        }.to raise_error Balanced::Unauthorized
+        Balanced.configure(key)
+      end
+
     end
   end
 

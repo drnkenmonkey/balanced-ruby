@@ -82,7 +82,7 @@ puts "ok, we have a merchant that's signing up, let's create an account for them
 
 bank_account = marketplace.create_bank_account(
     :account_number => "1234567890",
-    :bank_code => "12",
+    :routing_number => "322271627",
     :name => "Jack Q Merchant",
 )
 
@@ -136,6 +136,8 @@ bank_account = Balanced::BankAccount.new(
     :name => "Jake Skellington",
     :type => "checking"
 ).save
+
+raise "Should not have an account" if bank_account.has_account?
 
 puts "now let's credit it, the super-simple way"
 credit = bank_account.credit(

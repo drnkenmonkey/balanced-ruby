@@ -111,18 +111,22 @@ module Balanced
 
     # Associates the Card represented by +card_uri+ with this Account.
     #
-    # @return [Card]
-    def add_card card_uri
-      self.card_uri = card_uri
+    # @return [Account]
+    def add_card(card)
+      card.save if card.kind_of?(Balanced::Card) && card.hash.nil?
+      self.card_uri = Balanced::Utils.extract_uri_from_object(card)
       save
     end
 
     # Associates the BankAccount represented by +bank_account_uri+ with this
     # Account.
     #
-    # @return [BankAccount]
-    def add_bank_account bank_account_uri
-      self.bank_account_uri = bank_account_uri
+    # @return [Account]
+    def add_bank_account(bank_account)
+      if bank_account.kind_of?(Balanced::BankAccount) && bank_account.fingerprint.nil?
+        bank_account.save
+      end
+      self.bank_account_uri = Balanced::Utils.extract_uri_from_object(bank_account)
       save
     end
 
