@@ -26,6 +26,10 @@ module Balanced
       self.respond_to? 'account' and !self.account.nil?
     end
 
+    def has_customer?
+      self.respond_to? 'customer' and !self.account.nil?
+    end
+
     # Creates a Debit of funds from this BankAccount to your Marketplace's escrow account.
     #
     # @param [String] appears_on_statement_as If nil then Balanced will use
@@ -61,7 +65,7 @@ module Balanced
       description = args[1] || options.fetch(:description) { nil }
       appears_on_statement_as = args[3] || options.fetch(:appears_on_statement_as) { nil }
       
-      if self.has_account?
+      if self.has_account? || self.has_customer?
         meta = args[2] || options.fetch(:meta) { nil }
         destination_uri = args[4] || options.fetch(:destination_uri) { self.uri }
         credit = self.account.credit(

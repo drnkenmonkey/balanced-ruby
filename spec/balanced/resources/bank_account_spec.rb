@@ -78,6 +78,39 @@ describe Balanced::BankAccount, :vcr do
 
     end
 
+    context 'without a customer' do
+
+      subject { @bank_account.customer }
+      it { should be_nil }
+
+      describe 'has_customer?' do
+
+        subject { @bank_account.has_customer? }
+        it { should be_false }
+
+      end
+    end
+
+    context 'with a customer', :vcr do
+      before do
+        @customer = @marketplace.create_customer
+        bank_account = @marketplace.create_bank_account(
+            :account_number => "0987654321",
+            :bank_code => "321174851",
+            :name => "Timmy T. McTimmerson",
+            :type => "checking"
+        )
+        @customer.add_bank_account(bank_account.uri)
+        @bank_account_two = bank_account.reload
+      end
+
+      describe 'has_customer?' do
+        subject { @bank_account_two.has_customer? }
+        it { should be_true }
+      end
+
+    end
+
     describe 'account_number', :vcr do
       subject { @bank_account.account_number }
       it { should end_with '4321' }
