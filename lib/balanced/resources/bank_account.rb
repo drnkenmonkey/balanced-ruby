@@ -27,7 +27,7 @@ module Balanced
     end
 
     def has_customer?
-      self.respond_to? 'customer' and !self.account.nil?
+      self.respond_to? 'customer' and !self.customer.nil?
     end
 
     # Creates a Debit of funds from this BankAccount to your Marketplace's escrow account.
